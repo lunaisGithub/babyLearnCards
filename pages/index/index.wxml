@@ -1,0 +1,20 @@
+<!--pages/index/index.wxml-->
+<view class="container">
+  <!-- 标题 -->
+  <view class="title">趣味识字</view>
+
+  <!-- 游戏选择 -->
+  <view class="game-selector">
+    <navigator url="/pages/pair/pair" class="game-card">
+      <view class="game-card-title">🎯 象形配对</view>
+      <view class="game-card-desc">点击汉字和图片进行配对</view>
+    </navigator>
+    <navigator url="/pages/reading/reading" class="game-card">
+      <view class="game-card-title">📖 趣味识字</view>
+      <view class="game-card-desc">13大类200+汉字，带拼音和语音朗读</view>
+    </navigator>
+  </view>
+
+  <!-- 底部署名 -->
+  <view class="copyright">provided by 光明小月</view>
+</view>

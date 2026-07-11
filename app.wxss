@@ -1,0 +1,6 @@
+/* app.wxss - 全局样式 */
+page {
+  background-color: #f0f8ff;
+  font-family: "Microsoft YaHei", sans-serif;
+  padding-bottom: 20rpx;
+}

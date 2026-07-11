@@ -1,0 +1,41 @@
+<!--pages/reading/reading.wxml-->
+<view class="container">
+  <view class="title">趣味识字</view>
+
+  <view class="category-picker-box">
+    <picker 
+      range="{{categories}}" 
+      value="{{currentType}}"
+      bindchange="onPickerChange"
+    >
+      <view class="picker-display {{currentType == 0 ? 'active' : ''}}">
+        <text class="picker-label">{{categories[currentType]}}</text>
+        <text class="picker-arrow">▼</text>
+      </view>
+    </picker>
+    <view class="lang-toggle {{langMode === 'en' ? 'active' : ''}}" bindtap="onLangToggle">
+      <text>{{langMode === 'zh' ? '中' : 'EN'}}</text>
+    </view>
+  </view>
+
+  <view class="card-container">
+    <view class="char-pinyin">{{currentChar.pinyin}}</view>
+    <view class="char-text" bindtap="onVoice">
+      {{currentChar.char}}
+    </view>
+    <view class="char-english" wx:if="{{currentChar.english}}">{{currentChar.english}}</view>
+    <view class="char-desc">{{currentChar.desc}}</view>
+  </view>
+
+  <view class="voice-hint">点击汉字听读音</view>
+
+  <view class="progress-text">当前：{{currentIndex + 1}} / {{showList.length}} 个汉字</view>
+
+  <view class="btn-box">
+    <button class="func-btn prev-btn" bindtap="onPrev">上一个</button>
+    <button class="func-btn random-btn" bindtap="onRandom">随机识字</button>
+    <button class="func-btn next-btn" bindtap="onNext">下一个</button>
+  </view>
+
+  <view class="copyright">provided by 光明小月</view>
+</view>

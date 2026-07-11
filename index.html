@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- 1. 浏览器页面标题（基础） -->
+    <title>幼儿趣味识字小游戏 | provided by 光明小月</title>
+    <!-- 2. 微信分享核心OG标签（控制微信卡片标题/描述） -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="幼儿趣味识字小游戏">
+    <meta property="og:description" content="13大类200+常用汉字，带拼音释义，幼儿跟读识字工具">
+    <!-- 替换成你自己的网络图片链接，本地图片不生效 -->
+    <meta property="og:image" content="https://picsum.photos/id/20/1200/630">
+    <meta property="og:url" content="https://你的网页访问地址">
+    <meta property="og:locale" content="zh_CN">
+    <!-- 兼容QQ、浏览器分享标签 -->
+    <meta name="description" content="13大类200+常用汉字，带拼音释义，幼儿跟读识字小游戏">
+    <meta itemprop="name" content="幼儿趣味识字小游戏">
+    <meta itemprop="description" content="13大类200+常用汉字，带拼音释义，幼儿跟读识字工具">
+    <meta itemprop="image" content="https://picsum.photos/id/20/1200/630">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", sans-serif;
+        }
+
+        body {
+            background-color: #f0f8ff;
+            padding: 15px;
+            min-height: 100vh;
+        }
+
+        .title {
+            text-align: center;
+            color: #ff6b8b;
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px #fff;
+        }
+
+        /* 分类选择栏 */
+        .category-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .category-item {
+            padding: 8px 12px;
+            background: #409eff;
+            color: #fff;
+            border-radius: 20px;
+            font-size: 13px;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .category-item.active {
+            background: #ff6b8b;
+            transform: scale(1.05);
+        }
+
+        .category-item:hover {
+            opacity: 0.9;
+        }
+
+        /* 功能按钮区 */
+        .btn-box {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .func-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 15px;
+            cursor: pointer;
+            color: #fff;
+            transition: 0.3s;
+            box-shadow: 0 2px 8px #ccc;
+        }
+
+        .random-btn {
+            background: #67c23a;
+        }
+
+        .voice-btn {
+            background: #e6a23c;
+        }
+
+        .prev-btn {
+            background: #9c88ff;
+        }
+
+        .next-btn {
+            background: #36cfc9;
+        }
+
+        .func-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* 主识字卡片 */
+        .card-container {
+            width: 90%;
+            max-width: 400px;
+            height: 320px;
+            background: #fff;
+            border-radius: 20px;
+            margin: 0 auto;
+            box-shadow: 0 5px 20px #ddd;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .char-text {
+            font-size: 120px;
+            color: #222;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+
+        .char-pinyin {
+            font-size: 28px;
+            color: #409eff;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+
+        .char-desc {
+            font-size: 16px;
+            color: #999;
+            margin-top: 12px;
+        }
+
+        /* 进度文字 */
+        .progress-text {
+            text-align: center;
+            margin-top: 15px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* 识字建议 */
+        .tip-box {
+            margin-top: 30px;
+            background: #fffef0;
+            padding: 15px;
+            border-radius: 15px;
+            border: 1px solid #ffeaa7;
+        }
+
+        .tip-title {
+            color: #e6a23c;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .tip-text {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* 底部署名 */
+        .copyright {
+            text-align: center;
+            margin-top: 30px;
+            padding: 10px 0;
+            font-size: 13px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <h2 class="title">幼儿趣味识字小游戏</h2>
+
+    <!-- 分类选择 -->
+    <div class="category-box">
+        <button class="category-item active" data-index="0">全部汉字</button>
+        <button class="category-item" data-index="1">数字类</button>
+        <button class="category-item" data-index="2">人称家人</button>
+        <button class="category-item" data-index="3">身体五官</button>
+        <button class="category-item" data-index="4">日常动物</button>
+        <button class="category-item" data-index="5">果蔬食物</button>
+        <button class="category-item" data-index="6">自然天气</button>
+        <button class="category-item" data-index="7">颜色</button>
+        <button class="category-item" data-index="8">方位形状</button>
+        <button class="category-item" data-index="9">基础动词</button>
+        <button class="category-item" data-index="10">常用形容词</button>
+        <button class="category-item" data-index="11">时间</button>
+        <button class="category-item" data-index="12">校园生活用品</button>
+        <button class="category-item" data-index="13">基础虚词</button>
+    </div>
+
+    <!-- 功能按钮 -->
+    <div class="btn-box">
+        <button class="func-btn prev-btn" id="prevBtn">上一个</button>
+        <button class="func-btn voice-btn" id="voiceBtn">跟读发音</button>
+        <button class="func-btn next-btn" id="nextBtn">下一个</button>
+        <button class="func-btn random-btn" id="randomBtn">随机识字</button>
+    </div>
+
+    <!-- 识字卡片 -->
+    <div class="card-container" id="card">
+        <div class="char-pinyin" id="pinyin">yī</div>
+        <div class="char-text" id="char">一</div>
+        <div class="char-desc" id="desc">基础数字</div>
+    </div>
+
+    <div class="progress-text" id="progress">当前：1 / 203 个汉字</div>
+
+    <!-- 识字小贴士 -->
+    <div class="tip-box">
+        <div class="tip-title">💡 幼儿识字小建议</div>
+        <div class="tip-text">
+            1. 识字顺序优先：生活常用字 → 数字 → 人称家人 → 动作汉字 → 自然汉字，贴合孩子认知规律；<br>
+            2. 结合实物、绘本、日常场景识字，拒绝死记硬背，边看边认、边读边学；<br>
+            3. 每日少量多次练习，搭配跟读发音，培养孩子语感和识字兴趣；<br>
+            4. 反复复习巩固，通过随机认读、翻页复习加深记忆。
+        </div>
+    </div>
+
+    <!-- 底部署名 -->
+    <div class="copyright">
+        provided by 光明小月
+    </div>
+
+    <script>
+        // 完整13大类识字字库（汉字、拼音、释义）
+        const charAll = [
+            //1 数字类
+            [
+                {char:"一",pinyin:"yī",desc:"基础数字"},
+                {char:"二",pinyin:"èr",desc:"基础数字"},
+                {char:"三",pinyin:"sān",desc:"基础数字"},
+                {char:"四",pinyin:"sì",desc:"基础数字"},
+                {char:"五",pinyin:"wǔ",desc:"基础数字"},
+                {char:"六",pinyin:"liù",desc:"基础数字"},
+                {char:"七",pinyin:"qī",desc:"基础数字"},
+                {char:"八",pinyin:"bā",desc:"基础数字"},
+                {char:"九",pinyin:"jiǔ",desc:"基础数字"},
+                {char:"十",pinyin:"shí",desc:"基础数字"},
+                {char:"百",pinyin:"bǎi",desc:"数位单位"},
+                {char:"千",pinyin:"qiān",desc:"数位单位"},
+                {char:"零",pinyin:"líng",desc:"数字空位"}
+            ],
+            //2 人称家人
+            [
+                {char:"爸",pinyin:"bà",desc:"父亲称呼"},
+                {char:"妈",pinyin:"mā",desc:"母亲称呼"},
+                {char:"爷",pinyin:"yé",desc:"祖父称呼"},
+                {char:"奶",pinyin:"nǎi",desc:"祖母称呼"},
+                {char:"哥",pinyin:"gē",desc:"年长兄长"},
+                {char:"姐",pinyin:"jiě",desc:"年长姐姐"},
+                {char:"弟",pinyin:"dì",desc:"年幼弟弟"},
+                {char:"妹",pinyin:"mèi",desc:"年幼妹妹"},
+                {char:"我",pinyin:"wǒ",desc:"第一人称"},
+                {char:"你",pinyin:"nǐ",desc:"第二人称"},
+                {char:"他",pinyin:"tā",desc:"第三人称男"},
+                {char:"她",pinyin:"tā",desc:"第三人称女"},
+                {char:"人",pinyin:"rén",desc:"人类个体"},
+                {char:"儿",pinyin:"ér",desc:"孩童、子女"},
+                {char:"女",pinyin:"nǚ",desc:"女性、女孩"}
+            ],
+            //3 身体五官
+            [
+                {char:"口",pinyin:"kǒu",desc:"嘴巴、口腔"},
+                {char:"手",pinyin:"shǒu",desc:"手部肢体"},
+                {char:"耳",pinyin:"ěr",desc:"耳朵、听觉器官"},
+                {char:"目",pinyin:"mù",desc:"眼睛、视觉器官"},
+                {char:"头",pinyin:"tóu",desc:"头部身体部位"},
+                {char:"足",pinyin:"zú",desc:"脚部肢体"},
+                {char:"心",pinyin:"xīn",desc:"心脏、内心"},
+                {char:"牙",pinyin:"yá",desc:"牙齿"},
+                {char:"脸",pinyin:"liǎn",desc:"面部脸庞"},
+                {char:"毛",pinyin:"máo",desc:"毛发绒毛"},
+                {char:"骨",pinyin:"gǔ",desc:"骨骼骨头"}
+            ],
+            //4 日常动物
+            [
+                {char:"猫",pinyin:"māo",desc:"家养小动物"},
+                {char:"狗",pinyin:"gǒu",desc:"家养小动物"},
+                {char:"鸡",pinyin:"jī",desc:"常见家禽"},
+                {char:"鸭",pinyin:"yā",desc:"常见家禽"},
+                {char:"鱼",pinyin:"yú",desc:"水生动物"},
+                {char:"鸟",pinyin:"niǎo",desc:"飞行动物"},
+                {char:"虫",pinyin:"chóng",desc:"昆虫小虫"},
+                {char:"马",pinyin:"mǎ",desc:"家畜动物"},
+                {char:"牛",pinyin:"niú",desc:"家畜动物"},
+                {char:"羊",pinyin:"yáng",desc:"家畜动物"},
+                {char:"兔",pinyin:"tù",desc:"温顺小动物"},
+                {char:"虎",pinyin:"hǔ",desc:"大型猛兽"},
+                {char:"熊",pinyin:"xióng",desc:"大型动物"}
+            ],
+            //5 蔬菜水果食物
+            [
+                {char:"米",pinyin:"mǐ",desc:"主食粮食"},
+                {char:"饭",pinyin:"fàn",desc:"煮熟主食"},
+                {char:"面",pinyin:"miàn",desc:"面食主食"},
+                {char:"水",pinyin:"shuǐ",desc:"饮用液体"},
+                {char:"火",pinyin:"huǒ",desc:"火焰火种"},
+                {char:"瓜",pinyin:"guā",desc:"瓜果蔬果"},
+                {char:"果",pinyin:"guǒ",desc:"水果果实"},
+                {char:"菜",pinyin:"cài",desc:"蔬菜食材"},
+                {char:"豆",pinyin:"dòu",desc:"豆类食材"},
+                {char:"茶",pinyin:"chá",desc:"饮品茶水"},
+                {char:"肉",pinyin:"ròu",desc:"肉食食材"},
+                {char:"奶",pinyin:"nǎi",desc:"乳制品饮品"}
+            ],
+            //6 自然天气
+            [
+                {char:"日",pinyin:"rì",desc:"太阳、日子"},
+                {char:"月",pinyin:"yuè",desc:"月亮、月份"},
+                {char:"星",pinyin:"xīng",desc:"天上星星"},
+                {char:"云",pinyin:"yún",desc:"天空云朵"},
+                {char:"风",pinyin:"fēng",desc:"自然风力"},
+                {char:"雨",pinyin:"yǔ",desc:"下雨天气"},
+                {char:"雪",pinyin:"xuě",desc:"降雪天气"},
+                {char:"山",pinyin:"shān",desc:"自然山川"},
+                {char:"石",pinyin:"shí",desc:"石头石块"},
+                {char:"田",pinyin:"tián",desc:"农田土地"},
+                {char:"土",pinyin:"tǔ",desc:"泥土土壤"},
+                {char:"河",pinyin:"hé",desc:"自然小河"},
+                {char:"江",pinyin:"jiāng",desc:"宽阔大江"},
+                {char:"海",pinyin:"hǎi",desc:"广阔大海"},
+                {char:"天",pinyin:"tiān",desc:"天空天际"},
+                {char:"地",pinyin:"dì",desc:"大地地面"}
+            ],
+            //7 颜色
+            [
+                {char:"红",pinyin:"hóng",desc:"红色色彩"},
+                {char:"黄",pinyin:"huáng",desc:"黄色色彩"},
+                {char:"蓝",pinyin:"lán",desc:"蓝色色彩"},
+                {char:"白",pinyin:"bái",desc:"白色色彩"},
+                {char:"黑",pinyin:"hēi",desc:"黑色色彩"},
+                {char:"绿",pinyin:"lǜ",desc:"绿色色彩"},
+                {char:"灰",pinyin:"huī",desc:"灰色色彩"}
+            ],
+            //8 方位、大小形状
+            [
+                {char:"上",pinyin:"shàng",desc:"上方位置"},
+                {char:"下",pinyin:"xià",desc:"下方位置"},
+                {char:"左",pinyin:"zuǒ",desc:"左侧方位"},
+                {char:"右",pinyin:"yòu",desc:"右侧方位"},
+                {char:"前",pinyin:"qián",desc:"前面方位"},
+                {char:"后",pinyin:"hòu",desc:"后面方位"},
+                {char:"里",pinyin:"lǐ",desc:"内部里面"},
+                {char:"外",pinyin:"wài",desc:"外部外面"},
+                {char:"中",pinyin:"zhōng",desc:"中间中心"},
+                {char:"大",pinyin:"dà",desc:"体积宽阔"},
+                {char:"小",pinyin:"xiǎo",desc:"体积细小"},
+                {char:"多",pinyin:"duō",desc:"数量很多"},
+                {char:"少",pinyin:"shǎo",desc:"数量很少"},
+                {char:"方",pinyin:"fāng",desc:"方形形状"},
+                {char:"圆",pinyin:"yuán",desc:"圆形形状"}
+            ],
+            //9 基础动词（动作）
+            [
+                {char:"走",pinyin:"zǒu",desc:"步行走路"},
+                {char:"跑",pinyin:"pǎo",desc:"快速奔跑"},
+                {char:"跳",pinyin:"tiào",desc:"跳跃动作"},
+                {char:"看",pinyin:"kàn",desc:"用眼观看"},
+                {char:"听",pinyin:"tīng",desc:"用耳聆听"},
+                {char:"说",pinyin:"shuō",desc:"开口说话"},
+                {char:"吃",pinyin:"chī",desc:"进食吃饭"},
+                {char:"喝",pinyin:"hē",desc:"饮用喝水"},
+                {char:"开",pinyin:"kāi",desc:"打开开启"},
+                {char:"关",pinyin:"guān",desc:"关闭合上"},
+                {char:"来",pinyin:"lái",desc:"过来靠近"},
+                {char:"去",pinyin:"qù",desc:"离开前往"},
+                {char:"坐",pinyin:"zuò",desc:"坐下静止"},
+                {char:"立",pinyin:"lì",desc:"站立起身"},
+                {char:"睡",pinyin:"shuì",desc:"睡觉休息"},
+                {char:"玩",pinyin:"wán",desc:"玩耍嬉戏"},
+                {char:"学",pinyin:"xué",desc:"学习读书"},
+                {char:"画",pinyin:"huà",desc:"画画涂色"}
+            ],
+            //10 常用形容词
+            [
+                {char:"高",pinyin:"gāo",desc:"高度很高"},
+                {char:"矮",pinyin:"ǎi",desc:"高度低矮"},
+                {char:"长",pinyin:"cháng",desc:"长度较长"},
+                {char:"短",pinyin:"duǎn",desc:"长度短小"},
+                {char:"快",pinyin:"kuài",desc:"速度迅速"},
+                {char:"慢",pinyin:"màn",desc:"速度迟缓"},
+                {char:"好",pinyin:"hǎo",desc:"品质优良"},
+                {char:"坏",pinyin:"huài",desc:"品质不好"},
+                {char:"冷",pinyin:"lěng",desc:"温度寒凉"},
+                {char:"热",pinyin:"rè",desc:"温度滚烫"},
+                {char:"老",pinyin:"lǎo",desc:"年纪年长"},
+                {char:"少",pinyin:"shào",desc:"年纪幼小"}
+            ],
+            //11 时间
+            [
+                {char:"早",pinyin:"zǎo",desc:"清晨时段"},
+                {char:"晚",pinyin:"wǎn",desc:"傍晚夜里"},
+                {char:"今",pinyin:"jīn",desc:"当下今天"},
+                {char:"明",pinyin:"míng",desc:"次日明天"},
+                {char:"昨",pinyin:"zuó",desc:"过去昨天"},
+                {char:"春",pinyin:"chūn",desc:"春季时节"},
+                {char:"夏",pinyin:"xià",desc:"夏季时节"},
+                {char:"秋",pinyin:"qiū",desc:"秋季时节"},
+                {char:"冬",pinyin:"dōng",desc:"冬季时节"},
+                {char:"年",pinyin:"nián",desc:"完整年份"},
+                {char:"日",pinyin:"rì",desc:"一天日子"},
+                {char:"时",pinyin:"shí",desc:"时辰时刻"}
+            ],
+            //12 校园生活用品
+            [
+                {char:"门",pinyin:"mén",desc:"房屋大门"},
+                {char:"窗",pinyin:"chuāng",desc:"透光窗户"},
+                {char:"桌",pinyin:"zhuō",desc:"学习桌子"},
+                {char:"椅",pinyin:"yǐ",desc:"坐人椅子"},
+                {char:"书",pinyin:"shū",desc:"书本读物"},
+                {char:"纸",pinyin:"zhǐ",desc:"书写纸张"},
+                {char:"笔",pinyin:"bǐ",desc:"写字文具"},
+                {char:"灯",pinyin:"dēng",desc:"照明灯具"},
+                {char:"车",pinyin:"chē",desc:"代步车辆"},
+                {char:"屋",pinyin:"wū",desc:"居住房屋"},
+                {char:"床",pinyin:"chuáng",desc:"睡觉床铺"},
+                {char:"伞",pinyin:"sǎn",desc:"防雨伞具"}
+            ],
+            //13 简单虚词
+            [
+                {char:"有",pinyin:"yǒu",desc:"拥有存在"},
+                {char:"无",pinyin:"wú",desc:"没有不存在"},
+                {char:"是",pinyin:"shì",desc:"判断用词"},
+                {char:"不",pinyin:"bù",desc:"否定用词"},
+                {char:"也",pinyin:"yě",desc:"同样、亦是"},
+                {char:"和",pinyin:"hé",desc:"连接并列"},
+                {char:"都",pinyin:"dōu",desc:"全部所有"},
+                {char:"一",pinyin:"yī",desc:"量词单个"},
+                {char:"个",pinyin:"gè",desc:"通用量词"},
+                {char:"只",pinyin:"zhī",desc:"动物量词"},
+                {char:"几",pinyin:"jǐ",desc:"少量数量"}
+            ]
+        ];
+
+        // 合并全部汉字
+        let totalList = [];
+        charAll.forEach(arr=>{
+            totalList = totalList.concat(arr);
+        })
+        let currentType = 0; //0全部，1~13对应分类
+        let showList = totalList;
+        let index = 0;
+
+        //dom元素
+        const pinyinEl = document.getElementById('pinyin');
+        const charEl = document.getElementById('char');
+        const descEl = document.getElementById('desc');
+        const progressEl = document.getElementById('progress');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const voiceBtn = document.getElementById('voiceBtn');
+        const randomBtn = document.getElementById('randomBtn');
+        const categoryBtns = document.querySelectorAll('.category-item');
+
+        //渲染当前字
+        function render(){
+            const item = showList[index];
+            charEl.innerText = item.char;
+            pinyinEl.innerText = item.pinyin;
+            descEl.innerText = item.desc;
+            progressEl.innerText = `当前：${index+1} / ${showList.length} 个汉字`;
+        }
+
+        //朗读文字
+        function voiceRead(){
+            const text = showList[index].char;
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.lang = 'zh-CN';
+            speechSynthesis.speak(utter);
+        }
+
+        //切换分类
+        categoryBtns.forEach(btn=>{
+            btn.onclick = function(){
+                categoryBtns.forEach(b=>b.classList.remove('active'));
+                this.classList.add('active');
+                currentType = Number(this.dataset.index);
+                if(currentType === 0){
+                    showList = totalList;
+                }else{
+                    showList = charAll[currentType-1];
+                }
+                index = 0;
+                render();
+            }
+        })
+
+        //上一个
+        prevBtn.onclick = function(){
+            if(index > 0) index--;
+            render();
+        }
+        //下一个
+        nextBtn.onclick = function(){
+            if(index < showList.length-1) index++;
+            render();
+        }
+        //朗读
+        voiceBtn.onclick = voiceRead;
+        //随机
+        randomBtn.onclick = function(){
+            index = Math.floor(Math.random() * showList.length);
+            render();
+        }
+
+        //初始化
+        render();
+    </script>
+</body>
+</html>

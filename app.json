@@ -1,0 +1,13 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/reading/reading",
+    "pages/pair/pair"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#ff6b8b",
+    "navigationBarTitleText": "幼儿识字",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f0f8ff"
+  }
+}

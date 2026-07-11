@@ -1,0 +1,52 @@
+<!--pages/pair/pair.wxml-->
+<view class="container">
+  <view class="header">
+    <view class="title">象形识字配对</view>
+    <text class="tip">{{mode === 'high' ? '先点汉字，再点对应图片' : '先点图片，再点对应汉字'}}
+</text>
+  </view>
+
+  <view class="mode-bar">
+    <view class="mode-btn {{mode === 'high' ? 'active' : ''}}" bindtap="switchMode">高阶模式</view>
+    <view class="mode-btn {{mode === 'low' ? 'active' : ''}}" bindtap="switchMode">低阶模式</view>
+  </view>
+
+  <view class="game-container">
+    <view class="pair-row" wx:for="{{rows}}" wx:key="index">
+      <!-- 汉字卡片 -->
+      <view class="char-item">
+        <view 
+          class="char-card {{item.charHighlight ? 'selected' : (selectedWord === item.word ? 'selected' : '')}}" 
+          bindtap="onCharTap"
+          data-word="{{item.word}}"
+        >{{item.word}}</view>
+      </view>
+      
+      <!-- 结果标记：高阶在汉字后，低阶在图片前 -->
+      <view class="sign-item">
+        <text class="q-mark {{item.resultClass || 'q-default'}}">{{item.resultText || '?'}}</text>
+      </view>
+      
+      <!-- 图片卡片（emoji） -->
+      <view class="img-item">
+        <view 
+          class="img-card {{item.highlight ? 'highlight' : ''}}" 
+          bindtap="onImgTap"
+          data-match="{{item.imgWord}}"
+          data-row="{{index}}"
+        >
+          <text class="emoji-pic">{{item.emoji}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="control-area">
+    <button class="refresh-btn" bindtap="onRefresh">换一组题目</button>
+  </view>
+  <view class="result-panel {{resultPanelClass}}" wx:if="{{resultPanelText}}">
+    {{resultPanelText}}
+  </view>
+
+  <view class="footer-copyright">provided by 光明小月</view>
+</view>
