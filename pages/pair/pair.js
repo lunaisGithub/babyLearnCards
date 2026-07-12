@@ -347,10 +347,10 @@ Page({
       // 高阶：点汉字选中
       this.setData({ selectedWord: clickedWord });
     } else {
-      // 低阶：点汉字配对，结果标记在图片行（imgWord 所在行）
+      // 低阶：点汉字配对，结果标记在高亮行
       const rows = this.data.rows.map((row, idx) => {
         if (row.charHighlight && row.resultText === '?') {
-          if (clickedWord === row.imgWord) {
+          if (clickedWord === row.word) {
             return { ...row, resultText: '✅', highlight: false, charHighlight: false };
           } else {
             return { ...row, resultText: '❌', highlight: false, charHighlight: false };
@@ -387,13 +387,25 @@ Page({
         this._checkAllComplete(rows);
       }
     } else {
-      // 低阶：点图片高亮，只重置错误的
-      const rows = this.data.rows.map((row, idx) => ({
-        ...row,
-        resultText: row.resultText === '❌' ? '?' : row.resultText,
-        highlight: idx === rowIdx,
-        charHighlight: idx === rowIdx
-      }));
+      // 低阶：点图片后，高亮匹配的那个汉字卡片，同时高亮被点击的图片
+      const rows = this.data.rows.map((row, idx) => {
+        let newRow = { ...row };
+        // 只重置错误项
+        if (newRow.resultText === '❌') {
+          newRow.resultText = '?';
+        }
+        // 高亮 word（汉字）等于 targetWord（图片文字）的那一行汉字
+        if (row.word === targetWord) {
+          newRow.charHighlight = true;
+        } else {
+          newRow.charHighlight = false;
+        }
+        // 高亮被点击的图片所在行
+        if (idx === rowIdx) {
+          newRow.highlight = true;
+        }
+        return newRow;
+      });
       this.setData({ rows });
     }
   },
